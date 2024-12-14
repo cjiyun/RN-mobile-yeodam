@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { useEffect } from 'react';
+import { AuthProvider } from './contexts/AuthContext';
 import StackNavigator from './navigation/StackNavigator';
 
 export default function App() {
@@ -10,10 +11,12 @@ export default function App() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <StackNavigator />
-    </View>
+    <AuthProvider>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <StackNavigator />
+      </View>
+    </AuthProvider>
   );
 }
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Modal, Image } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Category, mockCategories, mockDestinations } from '../../constants/mockData';
-import { destination } from '../../types/destination';
+import { destination } from '../../types/typeInterfaces';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';

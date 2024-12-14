@@ -1,9 +1,10 @@
 import { createStackNavigator } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/navigation';
 import Header from '../components/Header';
 import HomeScreen from '../components/(tabs)/index';
 import SearchScreen from '../components/(tabs)/search';
 import DestinationScreen from '../components/destination/destDetails';
-import { RootStackParamList } from '../types/navigation';
+import WishListPage from '../components/(tabs)/wishListPage';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -30,6 +31,11 @@ export default function StackNavigator() {
         options={({ route }) => ({
           title: route.params.dest_id
         })}
+      />
+      <Stack.Screen
+        name='wishList'
+        component={WishListPage}
+        options={{ title: '가보고 싶은 장소' }}
       />
     </Stack.Navigator>
   );

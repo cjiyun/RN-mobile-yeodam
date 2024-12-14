@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Platform, View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Animated, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -7,14 +7,18 @@ import Header from '../../components/Header';
 import { commonStyles } from '../../styles/commonStyles';
 import { typography } from '../../styles/typography';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { destination } from '../../types/destination';
+import { destination } from '../../types/typeInterfaces';
 import { RootStackParamList } from '../../types/navigation';
+import { AntDesign } from '@expo/vector-icons';
+import { handleWishClick, showToastMessage, useWishListStatus } from '../wish/wishListProcess';
+import { useAuth } from '../../contexts/AuthContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const { user } = useAuth();
+  const [isWishList, setIsWishList] = useState(false);
   const [banners, setBanners] = useState([
     { dest_id: '1', dest_name: '서울타워', image: require('../../assets/images/N-Seoul-tower.jpeg'), keywords: ['도심', '문화'] },
     { dest_id: '5', dest_name: '부산 해운대', image: require('../../assets/images/busan.jpeg'), keywords: ['도심', '휴양'] },
@@ -184,8 +188,6 @@ export default function HomeScreen() {
 
   return (
     <View style={commonStyles.container}>
-      <StatusBar style="dark" />
-      <Header />
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
           {/* 배너 섹션 */}
@@ -197,16 +199,32 @@ export default function HomeScreen() {
               <View key={keyword} style={styles.recommendSection}>
                 <Text style={styles.recommendTitle}>#{keyword}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {recommendations[keyword]?.map((destination) => (
-                    <TouchableOpacity 
-                      key={destination.dest_id} 
-                      style={styles.recommendItem}
-                      onPress={() => handleRecommendClick(destination)}
-                    >
-                      <Image source={destination.image} style={styles.destinationImage} />
-                      <Text style={styles.destinationName}>{destination.dest_name}</Text>
-                    </TouchableOpacity>
-                  ))}
+                  {recommendations[keyword]?.map((destination) => {
+                    const isWished = user?.user_id ? useWishListStatus(user.user_id, destination.dest_id) : false;
+                    return (
+                      <TouchableOpacity 
+                        key={destination.dest_id} 
+                        style={styles.recommendItem}
+                        onPress={() => handleRecommendClick(destination)}
+                      >
+                        <Pressable onPress={() => {
+                          if (!user?.user_id) {
+                            showToastMessage('로그인 후에 사용 가능합니다');
+                            return;
+                          }
+                          handleWishClick(destination.dest_id, user.user_id);
+                        }}>                            
+                          <AntDesign 
+                            name={isWished ? "heart" : "hearto"} 
+                            size={30} 
+                            color={isWished ? "#eb4b4b" : "#999"} 
+                          />
+                        </Pressable>
+                        <Image source={destination.image} style={styles.destinationImage} />
+                        <Text style={styles.destinationName}>{destination.dest_name}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
                 </ScrollView>
               </View>
             ))

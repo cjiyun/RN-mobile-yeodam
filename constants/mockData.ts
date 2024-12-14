@@ -1,5 +1,5 @@
 import { ImageSourcePropType } from 'react-native';
-import { destination } from '../types/destination';
+import { destination } from '../types/typeInterfaces';
 
 export interface Category {
   category_id: string;

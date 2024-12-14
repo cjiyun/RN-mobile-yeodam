@@ -4,4 +4,5 @@ export type RootStackParamList = {
   destination: {
     dest_id: string;
   };
+  wishList: undefined;
 }; 
